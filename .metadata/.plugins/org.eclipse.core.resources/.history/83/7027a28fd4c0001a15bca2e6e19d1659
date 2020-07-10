@@ -1,0 +1,123 @@
+package com.bolsadeideas.springboot.backend.apirest2.controllers;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bolsadeideas.springboot.backend.apirest2.models.services.IClienteService;
+import com.bolsadeideas.springboot.backend.apirest2.models.entity.Cliente;
+/*Mostraremos por id y sera una peticion del tipo getmapping
+ * y va  a estar mapeada a la url /clientes/ con el parametro
+ * { id } el id cliente 
+ * va a retronar el cliente convertido en json y le llamaremos show
+ * y tendra el pathvariabel ya que lo estamos mostrando por id 
+ * y utilizando el service vamos a retornar el cliente
+ * luego implementamos el crear seria del tipo post el verbo post 
+ * asignamos la misma url con la que tenemos para listar 
+ * retronar el cliente creado y le vamos a llamar create y 
+ * va a recibir el objeto Cliente esto es lo que se va a pertisistir
+ * y como iene en formato json y tenemos que indicar que es un @Requestbody
+ * y vamos a retornar el bojeto creado el cuerpo del requestpor eso se tiene que anotar
+ * @Requestbody  */
+/*agregar fecha de creacion lo que 
+ * podriamos hacer es agregar el cliente
+ * y pasarle una fecha de java util*/
+
+/*lo podemos hacer a qui o incluso mas elegante nos vamos a la clase 
+ * => entity*/
+
+/*por ultimo en el create vamos anotar  ResponseStatus el httpstatus.creaAt como codigo
+ * cuando no se asigna el http status se asigna u */
+
+
+/*este es para angular nos sirve para hacer la comunicacion con el front end
+ * cambiamos datso entre ambos back end <=> front end*/
+/*vamos a eliminar  y editar y actualizar*/
+/*Cuando trabajamos con rest el verbo para actualizar seria un putmmaping 
+ * es similar al post pero en este caso es para crear un nuevo contenido y para 
+ * editar seria el put  
+ * y para la url seria la misma que el GETMAPPING("url")	@PutMapping("url")  
+ * por que tenemos que pasar el parametro id del cliente para poder obetenerlo 
+ * de la bd y actualizar sus atributos*/	
+/*creamos el meotodo en este caso va hacer Cliente va a retornar una cliente modificado
+ * update y va a recivir dos parametros primero el cliente que va a estar en el cuerpo 
+ * del   @RequestBody y ademas el id con @PathVariable del tipo long id 
+ * vamos a improtar el @PutMapping  primero tenemos que obtener el cliente de la bd 
+ * ṕor su id y el cliente  service por id le pasamos el paramaetro y obtenemos el lciente que 
+ * nos estan enviando lo idificamos con los datos que nos estan enviando 
+ * vamos percistri el lciente actual con los cambios y va hacer un merch que va a actualiar los datos 
+ * el metodo save siver tanto para hacer un intesrt como un update un insert si el id es null es 0 
+ * en el fondo si es un nuevo ojeto que esta tachado al bojeto de percistencia y tiene un valor del id
+ * el metodo save va hacer un merch por tanto lo va a acutalizar por tanto vamos a retornar el objeto 
+ *  acutalizado un save pero del cliente actual y no del cliente que pasamos por parametros y este 
+ *  es el cliente que viene de la bd el
+ *  El verbo seria un DeleteMapping la url seria la misma y pasamos el id del cliente que queremos eliminar 
+ *  un pulic void delete y pasamos un PathVaraible el id en el update igual que en el created el responsestatus 
+ *  es created mienstras que el deleted no retorna nada podemos usar el  @ResponseStatus(HttpStatus.NO_CONTENT) */
+/*utiliamos el verbo get para */
+
+
+@CrossOrigin(origins = {"http://localhost:4200"})
+@RestController
+@RequestMapping("/api")
+public class ClienteRestController {
+	
+	@Autowired
+	private IClienteService clienteService;
+	
+	@GetMapping("/clientes")
+	public List<Cliente> index(){
+		return (List<Cliente>) clienteService.findAll();
+		
+	}
+	
+	@GetMapping("/clientes/{id}")
+	
+	public Cliente show(@PathVariable Long id) {
+	
+		return clienteService.findById(id);
+	
+	}
+	@PostMapping("/clientes")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Cliente create(@PathVariable Cliente cliente  ) {
+		
+		cliente.setCreateAt(new Date());
+		return clienteService.save(cliente);
+	} 
+	@PutMapping("/clientes/{id}") 
+	@ResponseStatus(HttpStatus.CREATED)
+	public Cliente update(@RequestBody Cliente cliente,@PathVariable Long id ) {
+		
+		Cliente clienteActual =  clienteService.findById(id);
+		
+		clienteActual.setApellido(cliente.getApellido());
+		clienteActual.setNombre(cliente.getNombre());
+		clienteActual.setEmail(cliente.getEmail());;
+		
+		return clienteService.save(clienteActual); 
+		
+	}
+	
+	@DeleteMapping("/clientes/{id}")  
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete(@PathVariable Long id  ){
+		
+		clienteService.deleted(id);
+		
+	}
+	
+	
+}

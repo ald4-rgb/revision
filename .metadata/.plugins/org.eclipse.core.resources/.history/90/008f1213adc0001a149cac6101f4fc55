@@ -1,0 +1,73 @@
+package com.bolsadeideas.springboot.backend.apirest2.controllers;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bolsadeideas.springboot.backend.apirest2.models.services.IClienteService;
+import com.bolsadeideas.springboot.backend.apirest2.models.entity.Cliente;
+/*Mostraremos por id y sera una peticion del tipo getmapping
+ * y va  a estar mapeada a la url /clientes/ con el parametro
+ * { id } el id cliente 
+ * va a retronar el cliente convertido en json y le llamaremos show
+ * y tendra el pathvariabel ya que lo estamos mostrando por id 
+ * y utilizando el service vamos a retornar el cliente
+ * luego implementamos el crear seria del tipo post el verbo post 
+ * asignamos la misma url con la que tenemos para listar 
+ * retronar el cliente creado y le vamos a llamar create y 
+ * va a recibir el objeto Cliente esto es lo que se va a pertisistir
+ * y como iene en formato json y tenemos que indicar que es un @Requestbody
+ * y vamos a retornar el bojeto creado el cuerpo del requestpor eso se tiene que anotar
+ * @Requestbody  */
+/*agregar fecha de creacion lo que 
+ * podriamos hacer es agregar el cliente
+ * y pasarle una fecha de java util*/
+
+/*lo podemos hacer a qui o incluso mas elegante nos vamos a la clase 
+ * => entity*/
+
+/*por ultimo en el create vamos anotar */
+
+
+/*este es para angular nos sirve para hacer la comunicacion con el front end
+ * cambiamos datso entre ambos back end <=> front end*/
+@CrossOrigin(origins = {"http://localhost:4200"})
+@RestController
+@RequestMapping("/api")
+public class ClienteRestController {
+	
+	@Autowired
+	private IClienteService clienteService;
+	
+	@GetMapping("/clientes")
+	public List<Cliente> index(){
+		return (List<Cliente>) clienteService.findAll();
+		
+	}
+	
+	@GetMapping("/clientes/{id}")
+	
+	public Cliente show(@RequestBody Long id) {
+	
+		return clienteService.findById(id);
+	
+	}
+	@PostMapping("/clientes/")
+	@ResponseStatus
+	public Cliente create(@PathVariable Cliente cliente  ) {
+		
+		cliente.setCreateAt(new Date());
+		return clienteService.save(cliente);
+	} 
+	
+	
+}
